@@ -67,31 +67,31 @@ public class EditindexCR extends ControllerBase {
             ATag editLink=new ATag("editfield","編集");
             editLink.addUrlParameter(new KeyValue("f",field.displayName));
             editLink.addUrlParameter(new KeyValue("tb", URLEncoder.encode(dti.name,"utf-8")));
-            editLink.setClass("btn btn-primary");
+            editLink.addCssClass("btn btn-primary");
 
             ATag deleteLink=new ATag("deletefield","削除");
             deleteLink.addUrlParameter(new KeyValue("f",field.displayName));
             deleteLink.addUrlParameter(new KeyValue("tb", URLEncoder.encode(dti.name,"utf-8")));
             deleteLink.addUrlParameter(model.createPToken());
-            deleteLink.setClass("btn btn-primary");
+            deleteLink.addCssClass("btn btn-primary");
 
           //ボタングループ
             Elementer btns=new Elementer("div");
-            btns.setClass("btn-group btn-group-sm");
+            btns.addCssClass("btn-group btn-group-sm");
             btns.setAttribute("role", "group");
             btns.addChild(editLink,deleteLink);
 
         	dt.addRow(field.displayName,common.field.Util.getFieldDisplayName(field),btns.toHtml());
         }
         TableList listTb=new TableList(dt,true);
-        listTb.setClass("table table-bordered");
+        listTb.addCssClass("table table-bordered");
         listTb.setRaw(listTb.dataTable.columns.length-1, true);
 
 
         model.addElement("list", listTb);
 
         ATag createAtag=new ATag("createfield", "列追加");
-        createAtag.setClass("btn btn-primary");
+        createAtag.addCssClass("btn btn-primary");
         createAtag.addUrlParameter(new KeyValue("tb", URLEncoder.encode(dti.name,"utf-8")));
         model.addElement("createlink", createAtag);
 

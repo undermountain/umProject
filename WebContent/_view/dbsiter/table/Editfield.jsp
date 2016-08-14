@@ -20,28 +20,9 @@ Model model=(Model)request.getAttribute("model");
 	<div id="body" class="container">
 
 		<form method="post">
-		<%=model.writeTokenInput(request) %>
-		<%=model.getField("tb").toHtml() %>
-		<%=model.getField("f").toHtml() %>
+		<%=model.writeTokenInput() %>
 
-			<div class="form-group">
-				<label>
-					<%=model.getField("name").displayName %>
-				</label>
-				<%=model.getField("name").toHtml() %>
-				<%=model.getField("name").toErrorMessage() %>
-				<label>
-					<%=model.getField("type").displayName %>
-				</label>
-				<%=model.getField("type").toHtml() %>
-				<%=model.getField("type").toErrorMessage() %>
-
-				<div style="text-align:center;padding:20px;">
-					<button type="submit">
-						変更
-					</button>
-				</div>
-			</div>
+		<%=model.InputTableToHtml() %>
 		</form>
 	</div>
 

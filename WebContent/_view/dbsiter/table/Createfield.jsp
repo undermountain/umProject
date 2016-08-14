@@ -20,10 +20,9 @@ Model model=(Model)request.getAttribute("model");
 	<div id="body" class="container">
 
 		<form method="post">
-		<%=model.writeTokenInput(request) %>
-		<%=model.getField("tb").toHtml() %>
+		<%=model.writeTokenInput() %>
 
-		<%=model.getElement("inputtable").toHtml() %>
+		<%=model.InputTableToHtml() %>
 		</form>
 	</div>
 

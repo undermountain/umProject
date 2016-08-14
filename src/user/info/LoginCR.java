@@ -74,14 +74,14 @@ public class LoginCR extends ControllerBase {
         Mail mail=new Mail("id","ID(メールアドレス)");
         mail.setMaxlength(1000);
         mail.addValidation(new Required());
-        mail.setClass("form-control");
+        mail.addCssClass("form-control");
 
         Password pass=new Password("password","パスワード");
         pass.setMaxlength(50);
         pass.addValidation(new Required());
-        pass.setClass("form-control");
+        pass.addCssClass("form-control");
 
-        model.addField(mail,pass);
+        model.addFieldAll(mail,pass);
 		return model;
 
 	}

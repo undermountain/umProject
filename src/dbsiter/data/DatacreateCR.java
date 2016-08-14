@@ -84,7 +84,7 @@ public class DatacreateCR extends ControllerBase {
 			return false;
 		}
 
-    	model.addField(dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]));
+    	model.addFieldAll(dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]));
 
         InputTable it=new InputTable("登録", dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]));
 

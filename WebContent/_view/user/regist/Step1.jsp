@@ -17,7 +17,7 @@ Model model=(Model)request.getAttribute("model");
 		</p>
 		<%=model.errorMessageHtml() %>
 		<form method="post">
-			<%=model.writeTokenInput(request) %>
+			<%=model.writeTokenInput() %>
 			<%=model.getElement("inputdiv").toHtml() %>
 		</form>
 	</div>

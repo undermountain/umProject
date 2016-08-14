@@ -18,7 +18,7 @@ Model model=(Model)request.getAttribute("model");
 	</ol>
 	<div id="body" class="container">
 		<form method="post">
-			<%=model.writeTokenInput(request) %>
+			<%=model.writeTokenInput() %>
 			<div class="form-group">
 				<p>
 					テーブルの名称を入力してください。

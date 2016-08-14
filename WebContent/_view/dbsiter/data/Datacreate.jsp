@@ -18,7 +18,7 @@ Model model=(Model)request.getAttribute("model");
 	</ol>
 	<div id="body" class="container">
 		<form method="post" enctype="multipart/form-data">
-			<%=model.writeTokenInput(request) %>
+			<%=model.writeTokenInput() %>
 
 			<%=model.getElement("inputtable").toHtml() %>
 		</form>

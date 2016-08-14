@@ -21,7 +21,7 @@ Model model=(Model)request.getAttribute("model");
 		<li role="presentation" class="active"><a>列編集</a></li>
 	</ul>
 	<br>
-		<%=model.writeTokenInput(request) %>
+		<%=model.writeTokenInput() %>
 
 		<div>
 			<%=model.getElement("createlink").toHtml() %><br>

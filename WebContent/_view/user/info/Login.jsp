@@ -14,7 +14,7 @@ Model model=(Model)request.getAttribute("model");
 	<div id="body" class="container">
 		<%=model.errorMessageHtml() %>
 		<form method="post">
-			<%=model.writeTokenInput(request) %>
+			<%=model.writeTokenInput() %>
 			<div class="center-block">
 				<p>
 					<span class="nowrap">

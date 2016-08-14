@@ -43,7 +43,7 @@ public class EditCR extends ControllerBase {
 			model.addErrorMessage("テーブル名の変更に失敗しました。");
 			return;
 		}
-		dti.name=model.getField("name").getValue();
+		dti.name=model.getField("name").getStrValue();
 		File file=new File(Path.getSavePath(getUserIdFillInZero(), EDir.db, request.getParameter("tb")));
 		file.delete();
 		ClassSerializer.serialize(dti, Path.getSavePath(getUserIdFillInZero(), EDir.db, dti.name));
@@ -98,7 +98,7 @@ public class EditCR extends ControllerBase {
         };
         fileExist.errorMessage="指定された%sは既に登録されています";
         name.addValidation(fileExist);
-        name.setClass("form-control");
+        name.addCssClass("form-control");
 
         model.addField(name);
 

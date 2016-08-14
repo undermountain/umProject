@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.servlet.ServletException;
+
 import common.base.FieldBase;
 import common.consts.EDir;
 import common.consts.Path;
@@ -14,7 +16,6 @@ import common.field.Select;
 import common.field.Text;
 import common.io.ClassSerializer;
 import common.tag.ATag;
-import common.tag.InputTable;
 import common.type.KeyValue;
 import common.validation.Required;
 import common.web.ControllerBase;
@@ -23,36 +24,79 @@ import common.web.Model;
 public class CreatefieldCR extends ControllerBase {
 
 	@Override
-	protected void doBefore() throws IOException {
+	protected boolean runCustom() throws IOException, ServletException{
 		if(!checkParameter("tb")){
 			response.sendRedirect("index");
-		}
-		setModel();
-		if(checkParameter("step1")){
-			setModel1();
+			return true;
 		}
 
-		Button btn=new Button("step1","送信","1");
+        setModel();
+
+		if(!isPost()){
+			Button btn=new Button("step1","次へ","buttonvlaue");
+
+			model.addField(btn);
+			return true;
+		}
+
+		if(checkParameter("step1")){
+
+			if(!checkSetModel()){
+				Button btn=new Button("step1","次へ","buttonvlaue");
+				model.addField(btn);
+				return true;
+			}
+
+			setModel1();
+			common.field.Util.setFieldInfoInputs("0"/*model.getField("array").getStrValue()*/,model.getField("type").getStrValue(),model,null,null);
+			model.addField(new Hidden("step1","1"));
+
+		}
+
+		if(checkParameter("step2")){
+			if(!checkSetModel())return true;
+
+			String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db, model.getField("tb").getStrValue());
+			DataTableInfo dti=null;
+	        try {
+				dti=ClassSerializer.deserialize(path);
+			} catch (NumberFormatException | ClassNotFoundException e) {
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+				model.addErrorMessage("列の登録に失敗しました。");
+				return true;
+			}
+
+	        common.field.Util.editFieldInfoInputs("0"/*model.getField("array").getStrValue()*/,model.getField("type").getStrValue(),model,dti,null);
+
+	        ClassSerializer.serialize(dti, path);
+
+	        setMessage(String.format("列「%s」を登録しました。",model.getField("name").getValue()));
+	        response.sendRedirect("editindex?tb="+URLEncoder.encode(model.getField("tb").getStrValue(), "utf-8"));
+	        return true;
+		}
+
+		Button btn=new Button("step2","追加","buttonvlaue");
 		model.addField(btn);
-		InputTable it=new InputTable((FieldBase[])model.fieldList.toArray());
-		model.addElement("inputtable", it);
+
+		return true;
 	}
 
+	@Override
+	protected void doBefore() throws IOException {
+		// TODO 自動生成されたメソッド・スタブ
 
+	}
 
 	@Override
 	protected void doGet() throws IOException {
-		setModel();
+		// TODO 自動生成されたメソッド・スタブ
 
 	}
 
 	@Override
 	protected void doPost() throws IOException {
-		if(request.getParameter("step").equals("1")){
-			setModel1();
-		}else if(request.getParameter("step").equals("2")){
-			setModel2();
-		}
+		// TODO 自動生成されたメソッド・スタブ
 
 	}
 
@@ -62,9 +106,7 @@ public class CreatefieldCR extends ControllerBase {
 
 	}
 
-
-
-	public void setModel() throws UnsupportedEncodingException {
+	private void setModel() throws UnsupportedEncodingException {
 		String tbName=request.getParameter("tb");
 
         model.title=lib.UMConst.SITENAME_DBSITER;
@@ -74,17 +116,16 @@ public class CreatefieldCR extends ControllerBase {
 
         //列追加Field宣言
         Hidden tb=new Hidden("tb",tbName);
-        Hidden step=new Hidden("step1","1");
 
         Text name=new Text("name","列名");
         name.addValidation(new Required());
-        name.setClass("form-control");
+        name.addCssClass("form-control");
 
         name.addValidation(new common.base.ValidationBase(){
 
 			@Override
 			public boolean check(FieldBase field, Model model) {
-				String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db, model.getField("tb").getValue());
+				String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db, model.getField("tb").getStrValue());
 				DataTableInfo dti=null;
 		        try {
 					dti=ClassSerializer.deserialize(path);
@@ -105,15 +146,18 @@ public class CreatefieldCR extends ControllerBase {
 			}
         });
 
-
-
         Select type=new Select("type","データ型");
         common.field.Util.setFieldOptionItem(type);
-        type.setClass("form-control");
+        type.addCssClass("form-control");
 
-        model.addField(tb,step,name,type);
+        /*
+        Select array=new Select("array","入力数");
+        array.addOptionItem("0", "単数入力");
+        array.addOptionItem("1", "複数入力");
+        array.addCssClass("form-control");
+        */
 
-
+        model.addFieldAll(tb,name,type);//,array);
 
         //Atag
         ATag back=new ATag("editindex","「"+tbName+"」テーブル構成編集");
@@ -125,31 +169,6 @@ public class CreatefieldCR extends ControllerBase {
 	private void setModel1() {
         model.getField("name").setAttribute("readonly", "readonly");
         model.getField("type").setAttribute("readonly", "readonly");
-
-
-	}
-
-	private void setModel2() throws IOException {
-		String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db, model.getField("tb").getValue());
-		DataTableInfo dti=null;
-        try {
-			dti=ClassSerializer.deserialize(path);
-		} catch (NumberFormatException | ClassNotFoundException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-			model.addErrorMessage("列の登録に失敗しました。");
-			return;
-		}
-        FieldBase field=common.field.Util.getFieldInstance(model.getField("name").getValue(),model.getField("type").getValue());
-        dti.addField(field);
-
-
-
-
-        ClassSerializer.serialize(dti, path);
-
-        setMessage(String.format("列「%s」を登録しました。",model.getField("name").getValue()));
-        response.sendRedirect("editindex?tb="+URLEncoder.encode(model.getField("tb").getValue(), "utf-8"));
-
+        //model.getField("array").setAttribute("readonly", "readonly");
 	}
 }

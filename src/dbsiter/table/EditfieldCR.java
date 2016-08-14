@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.servlet.ServletException;
+
 import common.base.FieldBase;
 import common.consts.EDir;
 import common.consts.Path;
 import common.data.DataTableInfo;
+import common.field.Button;
 import common.field.Hidden;
 import common.field.Select;
 import common.field.Text;
@@ -21,54 +24,105 @@ import common.web.Model;
 public class EditfieldCR extends ControllerBase {
 
 	@Override
-	protected void doBefore() throws IOException {
-
-		if(request.getParameter("tb")==null || request.getParameter("tb").equals("")){
+	protected boolean runCustom() throws IOException, ServletException{
+		if(!checkParameter("tb")){
 			response.sendRedirect("index");
-			return;
+			return true;
 		}
+
 		if(request.getParameter("f")==null || request.getParameter("f").equals("")){
 			response.sendRedirect("editindex?tb="+URLEncoder.encode(request.getParameter("tb"), "utf-8"));
-			return;
+			return true;
 		}
 
-		setModel();
+		String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db, request.getParameter("tb"));
+		DataTableInfo dti=null;
+        try {
+			dti=ClassSerializer.deserialize(path);
+		} catch (NumberFormatException | ClassNotFoundException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+			model.addErrorMessage("列の登録に失敗しました。");
+			return true;
+		}
+
+        int fieldIndex = 0;
+
+        FieldBase field=null;
+
+        for(int i=0;i<dti.fieldList.size();i++){
+        	if(dti.fieldList.get(i).displayName.equals(request.getParameter("f"))){
+        		field=dti.fieldList.get(i);
+        		fieldIndex=i;
+        	}
+        }
+
+        setModel(field);
+
+        if(!isPost()){
+
+
+			Button btn=new Button("step1","次へ","buttonvlaue");
+
+			model.addField(btn);
+			return true;
+        }
+
+		if(checkParameter("step1")){
+
+			if(!checkSetModel()){
+				Button btn=new Button("step1","次へ","buttonvlaue");
+				model.addField(btn);
+				return true;
+			}
+
+
+			setModel1();
+
+			if(model.getField("type").getStrValue().equals(field.getClass().getSimpleName()) && !checkParameter("step2"))
+				common.field.Util.setFieldInfoInputs("0"/*model.getField("array").getStrValue()*/,model.getField("type").getStrValue(),model,field,dti.getColumnInfo(fieldIndex));
+			else
+				common.field.Util.setFieldInfoInputs("0"/*model.getField("array").getStrValue()*/,model.getField("type").getStrValue(),model,null,null);
+
+			model.addField(new Hidden("step1","1"));
+
+		}
+
+		if(checkParameter("step2")){
+			if(!checkSetModel())return true;
+
+	        common.field.Util.editFieldInfoInputs("0"/*model.getField("array").getStrValue()*/,model.getField("type").getStrValue(),model,dti,model.getField("f").getStrValue());
+
+	        ClassSerializer.serialize(dti, path);
+
+	        String msg="列「"+model.getField("f").getValue()+"」を"
+					+"変更しました。"
+					+(model.getField("f").getValue().equals(model.getField("name").getValue()) ? "":"(変更後列名「"+model.getField("name").getValue()+"」)");
+			setMessage(msg);
+			response.sendRedirect("editindex?tb="+URLEncoder.encode(dti.name, "utf-8"));
+	        return true;
+		}
+
+		Button btn=new Button("step2","追加","buttonvlaue");
+		model.addField(btn);
+
+		return true;
+	}
+
+	@Override
+	protected void doBefore() throws IOException {
 
 	}
 
 	@Override
 	protected void doGet() throws IOException {
-		if(!setModelOnGet()){
-			response.sendRedirect("editindex?tb="+URLEncoder.encode(request.getParameter("tb"), "utf-8"));
-			return;
-		}
+
+
 	}
 
 	@Override
 	protected void doPost() throws IOException {
-		DataTableInfo dti=null;
-		String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(model.getUserId()), 6), EDir.db, model.getField("tb").getValue());
-		//Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db,dti.name);
-		try {
-			dti=ClassSerializer.deserialize(path);
-		} catch (NumberFormatException | ClassNotFoundException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-			model.addErrorMessage("変更に失敗しました。");
-			return;
-		}
 
-        dti.editField(model.getField("f").getValue(), common.field.Util.getFieldInstance(model.getField("name").getValue(),model.getField("type").getValue()));
-
-		//カスタマーの保存領域に"dti"をシリアライズする。
-
-		ClassSerializer.serialize(dti, path);
-
-		String msg="列「"+model.getField("f").getValue()+"」を"
-				+"変更しました。"
-				+(model.getField("f").getValue().equals(model.getField("name").getValue()) ? "":"(変更後列名「"+model.getField("name").getValue()+"」)");
-		setMessage(msg);
-		response.sendRedirect("editindex?tb="+URLEncoder.encode(dti.name, "utf-8"));
 
 	}
 
@@ -78,10 +132,8 @@ public class EditfieldCR extends ControllerBase {
 
 	}
 
-
-	private void setModel() throws UnsupportedEncodingException {
+	private void setModel(FieldBase field) throws UnsupportedEncodingException {
 		String tbName=request.getParameter("tb");
-		String fieldName=request.getParameter("f");
 
         model.title=lib.UMConst.SITENAME_DBSITER;
         model.heading="「"+tbName+"」テーブル 列追加";
@@ -90,48 +142,57 @@ public class EditfieldCR extends ControllerBase {
 
         //列追加Field宣言
         Hidden tb=new Hidden("tb",tbName);
-        Hidden f=new Hidden("f",fieldName);
+        Hidden f=new Hidden("f",request.getParameter("f"));
+
+        String oldname=field.displayName;
 
         Text name=new Text("name","列名");
         name.addValidation(new Required());
-        name.setClass("form-control");
+        name.addCssClass("form-control");
 
         name.addValidation(new common.base.ValidationBase(){
 
 			@Override
 			public boolean check(FieldBase field, Model model) {
-				if(!model.request.getParameter("f").equals(field.getValue())){
-					String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db, model.getField("tb").getValue());
-					DataTableInfo dti=null;
-			        try {
-						dti=ClassSerializer.deserialize(path);
-					} catch (NumberFormatException | ClassNotFoundException e) {
-						// TODO 自動生成された catch ブロック
-						e.printStackTrace();
-						model.addErrorMessage("列の登録に失敗しました。");
-						return true;
-					} catch (IOException e) {
-						// TODO 自動生成された catch ブロック
-						e.printStackTrace();
-					}
+				String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db, model.getField("tb").getStrValue());
+				DataTableInfo dti=null;
+		        try {
+					dti=ClassSerializer.deserialize(path);
+				} catch (NumberFormatException | ClassNotFoundException | IOException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+					model.addErrorMessage("列の登録に失敗しました。");
+					return true;
+				}
+		        if(dti.dataTable.columns!=null)
+		        	if(!oldname.equals(field.getValue()))
 			        for(int i=0;i<dti.dataTable.columns.length;i++){
 			        	if(dti.dataTable.columns[i].equals(field.getValue())){
 			        		this.errorMessage=String.format("「%s」は既に登録されています。", field.getValue());
 			        		return false;
 			        	}
 			        }
-					return true;
-				}
 				return true;
 			}
         });
 
-
         Select type=new Select("type","データ型");
         common.field.Util.setFieldOptionItem(type);
-        type.setClass("form-control");
+        type.addCssClass("form-control");
 
-        model.addField(tb,f,name,type);
+        /*
+        Select array=new Select("array","入力数");
+        array.addOptionItem("0", "単数入力");
+        array.addOptionItem("1", "複数入力");
+        array.addCssClass("form-control");
+        */
+
+        if(!isPost()){
+	        name.setValue(field.displayName);
+	        type.setValue(field.getClass().getSimpleName());
+        }
+
+        model.addFieldAll(tb,f,name,type);//,array);
 
         //Atag
         ATag back=new ATag("editindex","「"+tbName+"」テーブル構成編集");
@@ -140,33 +201,9 @@ public class EditfieldCR extends ControllerBase {
 
 	}
 
-	private boolean setModelOnGet() {
-
-		DataTableInfo dti=null;
-        try {
-			dti=ClassSerializer.deserialize(Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(model.getUserId()), 6), EDir.db, model.getField("tb").getValue()));
-		} catch (NumberFormatException | ClassNotFoundException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		}
-
-        FieldBase field=null;
-        int size=dti.fieldList.size();
-        for(int i=0;i<size;i++){
-        	if(dti.fieldList.get(i).displayName.equals(model.getField("f").getValue())){
-        		field=dti.fieldList.get(i);
-        		break;
-        	}
-        }
-        if(field==null)return false;
-
-        model.getField("name").setValue(field.displayName);
-        model.getField("type").setValue(common.lib.Util.getClassName(field));
-
-        return true;
+	private void setModel1() {
+        model.getField("name").setAttribute("readonly", "readonly");
+        model.getField("type").setAttribute("readonly", "readonly");
+        //model.getField("array").setAttribute("readonly", "readonly");
 	}
 }

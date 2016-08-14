@@ -94,3 +94,7 @@ table.table td >img{
 .activechange:checked + li a{
 	background-color: white !important;
 }
+
+.form-control{
+	height:auto;
+}

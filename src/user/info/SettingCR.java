@@ -73,7 +73,7 @@ public class SettingCR extends ControllerBase {
         pass2.required=true;
         pass2.addValidation(new Comparison(EComparison.equal,pass));
 
-        model.addField(pass,pass2);
+        model.addFieldAll(pass,pass2);
 		return model;
 
 	}

@@ -35,7 +35,7 @@ public class Step1CR extends ControllerBase {
         mail.addValidation(new StringPattern(".*@.*\\..*", "「%s」はメールアドレスを入力してください。"));
         mail.setMaxlength(1000);
         mail.setPattern(".*@.*\\..*");
-        mail.setClass("form-control");
+        mail.addCssClass("form-control");
 
         Password pass=new Password("password1", "パスワード");
         pass.required=true;
@@ -43,16 +43,16 @@ public class Step1CR extends ControllerBase {
         pass.addValidation(new StringLength(4,50));
         pass.setMinlength(4);
         pass.setMaxlength(50);
-        pass.setClass("form-control");
+        pass.addCssClass("form-control");
 
         Password pass2=new Password("password2", "パスワード確認用");
         pass2.required=true;
         pass2.addValidation(new Comparison(EComparison.equal,pass));
-        pass2.setClass("form-control");
+        pass2.addCssClass("form-control");
 
 
 
-        model.addField(mail,pass,pass2);
+        model.addFieldAll(mail,pass,pass2);
         model.addElement("inputdiv", new InputTable("登録",mail,pass,pass2));
 	}
 
@@ -96,7 +96,7 @@ public class Step1CR extends ControllerBase {
 
 		String body="ご登録ありがとうございます。\r\n下記URLにアクセスして登録を完了してください。\r\n";
 		body+=request.getScheme()+"://"+common.web.Util.getDomain(request)+"/um/user/regist/Step3?t="+token;
-		mail.sendMail(model.getField("mail").getValue(), "DBSiter登録メール", body);
+		mail.sendMail(model.getField("mail").getStrValue(), "DBSiter登録メール", body);
 		response.sendRedirect("Step2");
 	}
 

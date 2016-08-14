@@ -89,23 +89,23 @@ public class IndexCR extends ControllerBase {
 	        		count=dtiList.get(i).dataTable.rows.size();
 	        	}
         	}
-        	dataEdit.setClass("btn btn-primary");
+        	dataEdit.addCssClass("btn btn-primary");
 
         	//テーブル構造編集リンク
         	ATag tableEdit=new ATag("editindex","構造編集");
         	tableEdit.addUrlParameter(new KeyValue("tb",URLEncoder.encode(dtiList.get(i).name,"utf-8")));
-        	tableEdit.setClass("btn btn-primary");
+        	tableEdit.addCssClass("btn btn-primary");
 
         	//削除リンク
         	ATag deleteLink=new ATag("delete","削除");
             deleteLink.addUrlParameter(new KeyValue("tb",URLEncoder.encode(dtiList.get(i).name,"utf-8")));
             deleteLink.addUrlParameter(model.createPToken());
             deleteLink.setAttribute("onclick", "return confirm('テーブルを削除しますか？')");
-            deleteLink.setClass("btn btn-primary");
+            deleteLink.addCssClass("btn btn-primary");
 
             //ボタングループ
             Elementer btns=new Elementer("div");
-            btns.setClass("btn-group btn-group-sm");
+            btns.addCssClass("btn-group btn-group-sm");
             btns.setAttribute("role", "group");
             btns.addChild(dataEdit,tableEdit,deleteLink);
 
@@ -114,7 +114,7 @@ public class IndexCR extends ControllerBase {
         					,btns.toHtml());
         }
         TableList listTb=new TableList(dt,true);
-        listTb.setClass("table table-bordered");
+        listTb.addCssClass("table table-bordered");
         listTb.setRaw(3, true);
 
 

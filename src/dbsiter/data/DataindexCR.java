@@ -71,18 +71,18 @@ public class DataindexCR extends ControllerBase {
             ATag editLink=new ATag("dataedit","編集");
             editLink.addUrlParameter(new KeyValue("key",i));
             editLink.addUrlParameter(new KeyValue("tb",UrlEncode(request.getParameter("tb"))));
-            editLink.setClass("btn btn-primary");
+            editLink.addCssClass("btn btn-primary");
 
 
             ATag deleteLink=new ATag("datadelete","削除");
             deleteLink.addUrlParameter(new KeyValue("key",i));
             deleteLink.addUrlParameter(new KeyValue("tb",UrlEncode(request.getParameter("tb"))));
             deleteLink.addUrlParameter(ptoken);
-            deleteLink.setClass("btn btn-primary");
+            deleteLink.addCssClass("btn btn-primary");
 
         	//ボタングループ
             Elementer btns=new Elementer("div");
-            btns.setClass("btn-group btn-group-sm");
+            btns.addCssClass("btn-group btn-group-sm");
             btns.setAttribute("role", "group");
             btns.addChild(editLink,deleteLink);
 
@@ -90,7 +90,7 @@ public class DataindexCR extends ControllerBase {
         }
 
         TableList listTb=new TableList(dti);
-        listTb.setClass("table table-bordered");
+        listTb.addCssClass("table table-bordered");
         listTb.setId("list");
 
         listTb.setRaw(dti.dataTable.columns.length-1, true);
@@ -98,7 +98,7 @@ public class DataindexCR extends ControllerBase {
         model.addElement(listTb);
 
         ATag create=new ATag("datacreate","追加登録");
-        create.setClass("btn btn-primary");
+        create.addCssClass("btn btn-primary");
         create.addUrlParameter(new KeyValue("tb", UrlEncode(request.getParameter("tb"))));
 
         model.addElement("create", create);

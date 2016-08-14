@@ -37,7 +37,7 @@ public class CreateCR extends ControllerBase {
 	protected void doPost() throws IOException {
 
 		DataTableInfo dti=new DataTableInfo();
-		dti.name=model.getField("name").getValue();
+		dti.name=model.getField("name").getValue().toString();
 
 		//カスタマーの保存領域に"dti"をシリアライズする。
 		String path=Path.getSavePath(getUserIdFillInZero(), EDir.db);
@@ -69,7 +69,7 @@ public class CreateCR extends ControllerBase {
         FileExist fileExist=new FileExist(Path.getSavePath(getUserIdFillInZero(), EDir.db));
         fileExist.errorMessage="指定された%sは既に登録されています";
         name.addValidation(fileExist);
-        name.setClass("form-control");
+        name.addCssClass("form-control");
         model.addField(name);
 
         ATag back=new ATag("../table/index","テーブル一覧");

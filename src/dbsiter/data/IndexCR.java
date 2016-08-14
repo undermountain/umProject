@@ -94,7 +94,7 @@ public class IndexCR extends ControllerBase {
         	dt.addRow(indexAtag.toHtml(),count);
         }
         TableList listTb=new TableList(dt,true);
-        listTb.setClass("table table-bordered");
+        listTb.addCssClass("table table-bordered");
         //listTb.setFormat(0, "<a href='dataindex?tb=%1$s'>%1$s</a>");
         listTb.setRaw(0, true);
         model.addElement("list", listTb);

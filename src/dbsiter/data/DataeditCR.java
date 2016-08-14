@@ -104,11 +104,11 @@ public class DataeditCR extends ControllerBase {
         //GETの場合
         if(request.getMethod().equals("GET")){
 	        for(int i=0;i<fields.length;i++){
-	        	fields[i].setValue((String)dti.dataTable.get(Integer.valueOf(request.getParameter("key")), fields[i].displayName));
+	        	fields[i].setValue(dti.dataTable.get(Integer.valueOf(request.getParameter("key")), fields[i].displayName));
 	        }
         }
 
-        model.addField(fields);
+        model.addFieldAll(fields);
 
         InputTable it=new InputTable("更新", dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]));
 

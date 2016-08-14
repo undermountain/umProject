@@ -22,7 +22,7 @@ Model model=(Model)request.getAttribute("model");
 	</ul>
 	<br>
 	<form method="post">
-		<%=model.writeTokenInput(request) %>
+		<%=model.writeTokenInput() %>
 
 		<div>
 			<%=model.getField("nameold").toHtml() %>
