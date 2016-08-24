@@ -7,15 +7,14 @@
 Model model=(Model)request.getAttribute("model");
 
 %>
+
 <jsp:include page="/_view/_common/prefix.jsp"></jsp:include>
 	<h3 class="heading">
 		<%=model.heading %>
 	</h3>
 	<div id="body" class="container">
-		<%=model.getElement("create").toHtml() %>
-		<%=model.getElement("list").toHtml() %>
 		<form method="post">
-
+			<img src="/um/contents/image/wait.jpg" style=""/>
 		</form>
 	</div>
 

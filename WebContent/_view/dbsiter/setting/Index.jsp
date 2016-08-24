@@ -13,7 +13,7 @@ Model model=(Model)request.getAttribute("model");
 	</h3>
 	<div id="body" class="container">
 		<form method="post">
-
+<img src="/um/contents/image/wait.jpg" style=""/>
 		</form>
 	</div>
 

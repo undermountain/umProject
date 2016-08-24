@@ -2,7 +2,6 @@ package dbsiter.table;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +44,13 @@ public class IndexCR extends ControllerBase {
 		// TODO 自動生成されたメソッド・スタブ
 
 	}
-	private Model getModel() throws UnsupportedEncodingException {
+	private Model getModel() throws IOException {
 
         model.title=lib.UMConst.SITENAME_DBSITER;
         model.heading="テーブル一覧";
 
         File tableFiles=new File(Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(getUserId()), 6), EDir.db));
+
         String[] tableNames=tableFiles.list();
         List<DataTableInfo> dtiList=new ArrayList<DataTableInfo>();
 
@@ -75,24 +75,9 @@ public class IndexCR extends ControllerBase {
         for(int i=0;i<size;i++){
 
         	int count=0;
-        	//データ編集リンク
-        	ATag dataEdit=null;
-        	if(dtiList.get(i).dataTable.columns==null || dtiList.get(i).dataTable.columns.length==0){
-        		dataEdit=new ATag("javascript:alert('列が登録されていません。')", "データ編集");
-        	}else{
-	            dataEdit=new ATag("../data/dataindex", "データ編集");
 
-				dataEdit.addUrlParameter(new KeyValue("tb",URLEncoder.encode(dtiList.get(i).name,"utf-8")));
-
-
-	        	if(dtiList.get(i).dataTable!=null && dtiList.get(i).dataTable.rows!=null){
-	        		count=dtiList.get(i).dataTable.rows.size();
-	        	}
-        	}
-        	dataEdit.addCssClass("btn btn-primary");
-
-        	//テーブル構造編集リンク
-        	ATag tableEdit=new ATag("editindex","構造編集");
+        	//テーブル編集リンク
+        	ATag tableEdit=new ATag("dataindex","編集");
         	tableEdit.addUrlParameter(new KeyValue("tb",URLEncoder.encode(dtiList.get(i).name,"utf-8")));
         	tableEdit.addCssClass("btn btn-primary");
 
@@ -107,9 +92,9 @@ public class IndexCR extends ControllerBase {
             Elementer btns=new Elementer("div");
             btns.addCssClass("btn-group btn-group-sm");
             btns.setAttribute("role", "group");
-            btns.addChild(dataEdit,tableEdit,deleteLink);
+            btns.addChild(tableEdit,deleteLink);
 
-        	dt.addRow(dtiList.get(i).name,count
+        	dt.addRow(dtiList.get(i).name,dtiList.get(i).dataTable.rows.size()
         			,dtiList.get(i).fieldList==null ? 0:dtiList.get(i).fieldList.size()
         					,btns.toHtml());
         }

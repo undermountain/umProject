@@ -1,4 +1,4 @@
-package dbsiter.data;
+package dbsiter.table;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -8,7 +8,6 @@ import common.base.FieldBase;
 import common.consts.EDir;
 import common.consts.Path;
 import common.data.DataTableInfo;
-import common.field.Image;
 import common.io.ClassSerializer;
 import common.tag.ATag;
 import common.tag.InputTable;
@@ -16,25 +15,19 @@ import common.type.KeyValue;
 import common.web.ControllerBase;
 import common.web.Util;
 
-public class DataeditCR extends ControllerBase {
+public class DatacreateCR extends ControllerBase {
 
 	@Override
 	protected void doBefore() throws IOException {
 
-		if(!request.getParameterMap().containsKey("tb")){
+		if(!checkParameter("tb")){
 			response.sendRedirect("index");
 			return;
 		}
-		if(!request.getParameterMap().containsKey("key")){
-			response.sendRedirect("dataindex?tb="+URLEncoder.encode(request.getParameter("tb"),"utf-8"));
-			return;
-		}
 		if(!setModel()){
-			response.sendRedirect("dataindex?tb="+URLEncoder.encode(request.getParameter("tb"),"utf-8"));
+			response.sendRedirect("Dataindex?tb="+URLEncoder.encode(request.getParameter("tb"),"utf-8"));
 			return;
 		}
-
-
 	}
 
 	@Override
@@ -45,6 +38,7 @@ public class DataeditCR extends ControllerBase {
 
 	@Override
 	protected void doPost() throws IOException {
+
 		DataTableInfo dti=null;
 		String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(model.getUserId()), 6), EDir.db, request.getParameter("tb"));
         try {
@@ -56,21 +50,16 @@ public class DataeditCR extends ControllerBase {
 			return;
 		}
         int size=dti.fieldList.size();
-        int key=Integer.valueOf(request.getParameter("key"));
+        Object[] rowData=new Object[size];
         for(int i=0;i<size;i++){
-        	if(common.lib.Util.getClassName(model.getField(dti.fieldList.get(i).displayName)).equals(Image.class.getSimpleName())
-        			&& model.getField(dti.fieldList.get(i).displayName).getValue()==null){
-
-        	}else{
-        		dti.dataTable.set(key,dti.fieldList.get(i).displayName,model.getField(dti.fieldList.get(i).displayName).getValue());
-        	}
+        	rowData[i]=model.getField(dti.dataTable.columns[i]).getValue();
         }
+        dti.dataTable.addRow(rowData);
 
         ClassSerializer.serialize(dti, path);
 
-        setMessage("テーブル「"+dti.name+"」にデータが更新されました。");
+        setMessage("テーブル「"+dti.name+"」にデータが登録されました。");
 		response.sendRedirect("dataindex?tb="+URLEncoder.encode(dti.name, "utf-8"));
-
 	}
 
 	@Override
@@ -81,52 +70,38 @@ public class DataeditCR extends ControllerBase {
 
 
 	private boolean setModel() throws UnsupportedEncodingException {
-
         model.title=lib.UMConst.SITENAME_DBSITER;
-        model.heading="データ閲覧・入力";
+        model.heading="データ追加登録";
 
         model.checkToken=true;
 
-		DataTableInfo dti=null;
-		String path=Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(model.getUserId()), 6), EDir.db, request.getParameter("tb"));
+        DataTableInfo dti=null;
         try {
-			dti=ClassSerializer.deserialize(path);
-		} catch (NumberFormatException | ClassNotFoundException e) {
+			dti=ClassSerializer.deserialize(Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(model.getUserId()), 6), EDir.db, request.getParameter("tb")));
+		} catch (NumberFormatException | ClassNotFoundException | IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 			return false;
-		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
 		}
-        FieldBase[] fields=dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]);
 
-        //GETの場合
-        if(request.getMethod().equals("GET")){
-	        for(int i=0;i<fields.length;i++){
-	        	fields[i].setValue(dti.dataTable.get(Integer.valueOf(request.getParameter("key")), fields[i].displayName));
-	        }
-        }
+    	model.addFieldAll(dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]));
 
-        model.addFieldAll(fields);
-
-        InputTable it=new InputTable("更新", dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]));
+        InputTable it=new InputTable("登録", dti.fieldList.toArray(new FieldBase[dti.fieldList.size()]));
 
         model.addElement("inputtable", it);
 
-        ATag back1=new ATag("../table/index","テーブル一覧");
+        ATag back1=new ATag("index","テーブル一覧");
         back1.addUrlParameter(new KeyValue("tb",Util.urlEncode(request.getParameter("tb"))));
 
         model.addElement("back1",back1);
 
-        ATag back2=new ATag("dataindex","「"+request.getParameter("tb")+"」テーブル");
+        ATag back2=new ATag("dataindex","「"+request.getParameter("tb")+"」テーブル編集");
         back2.addUrlParameter(new KeyValue("tb",Util.urlEncode(request.getParameter("tb"))));
 
         model.addElement("back2",back2);
 
         return true;
 	}
-
 
 
 }

@@ -1,4 +1,4 @@
-package dbsiter.data;
+package dbsiter.table;
 
 import java.io.IOException;
 import java.net.URLEncoder;

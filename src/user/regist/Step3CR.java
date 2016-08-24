@@ -57,7 +57,7 @@ public class Step3CR extends ControllerBase {
         }
 
 
-        model.addData("msg", dt.get(0, "mail")+"様<br>登録が完了いたしました。");
+        model.addData("msg", dt.get(0, "mail")+"様<br>登録が完了いたしました。<br><a href=\"/um/user/info/login\">ログインページ</a>からログインしてください。");
 
 	}
 

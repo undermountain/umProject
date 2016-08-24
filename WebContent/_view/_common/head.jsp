@@ -7,6 +7,7 @@
 
 <script src="/um/scripts/jquery-2.2.3.min.js"></script>
 <script type="text/javascript" src="/um/scripts/bootstrap.min.js"></script>
+<script type="text/javascript" src="/um/scripts/custom.js"></script>
 <script type="text/javascript" src="/um/scripts/default.js"></script>
 
 

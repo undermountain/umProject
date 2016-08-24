@@ -1,4 +1,4 @@
-package dbsiter.data;
+package dbsiter.table;
 
 import java.io.IOException;
 
@@ -22,12 +22,14 @@ public class DataindexCR extends ControllerBase {
 			response.sendRedirect("index");
 			return;
 		}
+
 		if(!setModel())return;
 	}
 
+
+
 	@Override
 	protected void doGet() throws IOException {
-		// TODO 自動生成されたメソッド・スタブ
 
 	}
 
@@ -46,7 +48,7 @@ public class DataindexCR extends ControllerBase {
 	private boolean setModel() throws IOException {
 
         model.title=lib.UMConst.SITENAME_DBSITER;
-        model.heading="「"+request.getParameter("tb")+"」テーブル";
+        model.heading="「"+model.request.getParameter("tb") +"」テーブル編集";
 
         DataTableInfo dti=null;
         try {
@@ -57,6 +59,13 @@ public class DataindexCR extends ControllerBase {
 			response.sendRedirect("index");
 			return false;
 		}
+
+        if(dti.dataTable.columns==null || dti.dataTable.columns.length==0){
+        	setMessage("列が登録されていません。列を追加してください。");
+        	response.sendRedirect("editindex?tb="+UrlEncode(request.getParameter("tb")));
+        	return false;
+        }
+
         //編集ボタンカラム追加
         dti.addColumn(" ");
         ColumnInfo colInfo=new ColumnInfo();
@@ -103,11 +112,22 @@ public class DataindexCR extends ControllerBase {
 
         model.addElement("create", create);
 
-        ATag back=new ATag("../table/index","テーブル一覧");
+        ATag back=new ATag("index","テーブル一覧");
         //back.setClass("btn btn-default");
         back.addUrlParameter(new KeyValue("tb", UrlEncode(request.getParameter("tb"))));
 
         model.addElement("back", back);
+
+
+
+        ATag edit=new ATag("edit","テーブル設定");
+        edit.addUrlParameter(new KeyValue("tb", UrlEncode(request.getParameter("tb"))));
+        model.addElement("edit", edit);
+
+        ATag editindex=new ATag("editindex","列設定");
+        editindex.addUrlParameter(new KeyValue("tb", UrlEncode(request.getParameter("tb"))));
+        model.addElement("editindex", editindex);
+
         return true;
 	}
 

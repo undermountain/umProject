@@ -22,6 +22,15 @@ public class EditCR extends ControllerBase {
 
 	@Override
 	protected void doBefore() throws IOException {
+		if(!request.getParameterMap().containsKey("tb")){
+			response.sendRedirect("index");
+			return;
+		}
+		if(checkParameter("disp")){
+			tableDisplayChange(request.getParameter("disp"));
+			response.sendRedirect("edit?tb=" + UrlEncode(request.getParameter("tb")));
+			return;
+		}
 		model=setModel();
 	}
 
@@ -73,7 +82,7 @@ public class EditCR extends ControllerBase {
 			e.printStackTrace();
 		}
 
-        model.heading="「"+dti.name +"」テーブル構成編集";
+        model.heading="「"+model.request.getParameter("tb") +"」テーブル編集";
 
 
 
@@ -102,11 +111,44 @@ public class EditCR extends ControllerBase {
 
         model.addField(name);
 
-        //リンク
-        ATag editfield=new ATag("editfield", "列編集");
-        editfield.addUrlParameter(new KeyValue("tb",request.getParameter("tb")));
+        //パブリックリンク
+        String[] urls=request.getRequestURL().toString().split("/");
+        String url=String.format("%s//%s/um/pub/dbsiter/table?u=%s&t=%s", urls[0],urls[2],getUserIdFillInZero(),UrlEncode(request.getParameter("tb")));
+        ATag publicurl=new ATag(url, url);
+        publicurl.setAttribute("target", "_blank");
 
-        model.addElement("editfield",editfield);
+        model.addElement("publicurl", publicurl);
+
+        model.addData("panel", dti.display ? "panel-info":"panel-danger");
+
+        ATag disp=new ATag("edit",dti.display ? "非公開にする":"公開する");
+        disp.addCssClass("btn " + (dti.display ? "btn-danger":"btn-primary"));
+        disp.addUrlParameter(new KeyValue("tb", UrlEncode(request.getParameter("tb"))));
+        disp.addUrlParameter(new KeyValue("disp", dti.display ? "0":"1"));
+        model.addElement("disp", disp);
+
+        //リンク
+        ATag editindex=new ATag("editindex", "列設定");
+        editindex.addUrlParameter(new KeyValue("tb",request.getParameter("tb")));
+
+        model.addElement("editindex",editindex);
+
+
+    	//データ編集リンク
+    	ATag dataindex=null;
+    	if(dti.dataTable.columns==null || dti.dataTable.columns.length==0){
+    		dataindex=new ATag("javascript:alert('列が登録されていません。\\n「列設定」から列を追加してください。')", "データ編集");
+    	}else{
+            dataindex=new ATag("dataindex", "データ編集");
+            dataindex.addUrlParameter(new KeyValue("tb",request.getParameter("tb")));
+
+    	}
+    	 model.addElement("dataindex",dataindex);
+
+//        ATag dataindex=new ATag("dataindex", "データ編集");
+//        dataindex.addUrlParameter(new KeyValue("tb",request.getParameter("tb")));
+//
+//        model.addElement("dataindex",dataindex);
 
         //パンくず
         ATag back=new ATag("index","テーブル一覧");
@@ -117,4 +159,25 @@ public class EditCR extends ControllerBase {
 		return model;
 	}
 
+
+	private void tableDisplayChange(String parameter) throws IOException {
+		DataTableInfo dti=null;
+        try {
+			dti=ClassSerializer.deserialize(Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(model.getUserId()), 6), EDir.db, request.getParameter("tb")));
+		} catch (NumberFormatException | ClassNotFoundException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+			return;
+		}
+        if(parameter.equals("0")){
+        	dti.display=false;
+        }else if(parameter.equals("1")){
+        	dti.display=true;
+        }
+
+        ClassSerializer.serialize(dti, Path.getSavePath(common.lib.Util.fillInZero(Integer.valueOf(model.getUserId()), 6), EDir.db, request.getParameter("tb")));
+
+        return;
+
+	}
 }

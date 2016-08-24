@@ -14,7 +14,7 @@ Model model=(Model)request.getAttribute("model");
 		<%=model.heading %>
 	</h3>
 	<div id="body" class="container">
-		<a href="/um/dbsiter/data/index"><%=lib.UMConst.SITENAME_DBSITER %></a>
+		<a href="/um/dbsiter/table/index"><%=lib.UMConst.SITENAME_DBSITER %></a>
 	</div>
 
 <jsp:include page="/_view/_common/suffix.jsp"></jsp:include>

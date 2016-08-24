@@ -15,7 +15,15 @@ Model model=(Model)request.getAttribute("model");
 		<li><%=model.getElement("back").toHtml() %></li>
 		<li class="active"><%=model.heading %></li>
 	</ol>
+	<ul class="nav nav-tabs">
+		<li>&nbsp;</li>
+		<li role="presentation" class="active"><a>データ編集</a></li>
+		<li role="presentation"><%=model.getElement("edit").toHtml() %></li>
+		<li role="presentation"><%=model.getElement("editindex").toHtml() %></li>
+	</ul>
+
 	<div id="body" class="container">
+		<br>
 
 		<%=model.getElement("create").toHtml() %>
 		<%=model.getElement("list").toHtml() %>

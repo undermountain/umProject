@@ -44,4 +44,31 @@
   </servlet-mapping>
 
 
+  <servlet>
+    <servlet-name>HPSiterServlet</servlet-name>
+    <servlet-class>servlet.HPSiterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HPSiterServlet</servlet-name>
+    <url-pattern>/hpsiter/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>SNSiterServlet</servlet-name>
+    <servlet-class>servlet.SNSiterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SNSiterServlet</servlet-name>
+    <url-pattern>/snsiter/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>PubServlet</servlet-name>
+    <servlet-class>servlet.PubServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PubServlet</servlet-name>
+    <url-pattern>/pub/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>

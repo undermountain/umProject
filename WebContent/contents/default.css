@@ -98,3 +98,33 @@ table.table td >img{
 .form-control{
 	height:auto;
 }
+
+.indent{
+	padding:5px 20px;
+}
+
+.under-h{
+	margin-top:0;
+}
+
+.form-control input[type=checkbox]{
+	display:none;
+}
+ul.form-control{
+	list-style-type:none;
+}
+.form-control label{
+	display:block;
+}
+.form-control input[type=checkbox] + span{
+	display:block;
+	text-align:center;
+	box-shadow:3px 3px 8px rgba(255,255,255,0.3) inset,-3px -3px 8px rgba(0,0,0,0.3) inset;
+	border:1px solid #999;
+	padding:5px;
+	cursor:pointer;
+}
+.form-control input[type=checkbox]:checked + span{
+	box-shadow:3px 3px 8px rgba(0,0,0,0.3) inset,-3px -3px 8px rgba(255,255,255,0.3) inset;
+	background-color:rgb(230,230,180);
+}

@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <style>
+        .number {
+            background-color: #aaa;
+
+            padding: 8px 25px;
+            font-size: 50px;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 100px;
+            display: inline-block;
+            box-shadow: rgba(255,255,255,0.5) 20px 20px 20px inset,rgba(0,0,0,0.5) -20px -20px 20px inset;
+            position:absolute;
+            margin:30px;
+            cursor:pointer;
+        }
+        .number[selected]{
+            background-color:#ff5;
+            border:1px solid #333;
+
+        }
+            .number[selected] span {
+                opacity:1 !important;
+            }
+        .r0{
+            top:0;
+        }
+        .r1{
+            top:100px;
+        }
+        .r2{
+            top:200px;
+        }
+        .r3{
+            top:300px;
+        }
+        .r4{
+            top:400px;
+        }
+        .c0{
+            left:0;
+        }
+        .c1{
+            left:100px;
+        }
+        .c2{
+            left:200px;
+        }
+        .c3{
+            left:300px;
+        }
+        .c4{
+            left:400px;
+        }
+        .main{
+            padding:20px;
+            border:1px solid #aaa;
+            border-radius:100px;
+            position:relative;
+            width:500px;
+            height:500px;
+            margin-left:auto;
+            margin-right:auto;
+        }
+
+        #message1div{
+            font-size:50px;
+            text-align:center;
+            color:white;
+        }
+        #history{
+            font-size:30px;
+            text-align:center;
+            color:white;
+        }
+        #message1{
+            color:red;
+        }
+        #message2{
+            color:yellow;
+        }
+
+        #refresh{
+            padding:10px 20px;
+            border-radius:20px;
+            margin:5px;
+            background-color:#eea;
+            font-weight:bold;
+            font-size:50px;
+            box-shadow: rgba(255,255,255,0.5) 20px 20px 20px inset,rgba(0,0,0,0.5) -20px -20px 20px inset;
+        }
+    </style>
+</head>
+<body style="background-color:black;" onclick="restart()">
+    <div style="text-align:center;">
+        <button id="refresh" type="button" onclick="refresh(this)" style="">復活！！</button>
+    </div>
+    
+    <div class="main" style="background-color:#eee;">
+        <div class="number r0 c0" onclick="select(this)">
+            <span>0</span>
+        </div>
+        <div class="number r0 c1" onclick="select(this)">
+            <span>1</span>
+        </div>
+        <div class="number r0 c2" onclick="select(this)">
+            <span>2</span>
+        </div>
+        <div class="number r0 c3" onclick="select(this)">
+            <span>3</span>
+        </div>
+        <div class="number r0 c4" onclick="select(this)">
+            <span>4</span>
+        </div>
+        <div class="number r1 c0" onclick="select(this)">
+            <span>5</span>
+        </div>
+        <div class="number r1 c1" onclick="select(this)">
+            <span>6</span>
+        </div>
+        <div class="number r1 c2" onclick="select(this)">
+            <span>7</span>
+        </div>
+        <div class="number r1 c3" onclick="select(this)">
+            <span>8</span>
+        </div>
+        <div class="number r1 c4" onclick="select(this)">
+            <span>9</span>
+        </div>
+        <div class="number r2 c0" onclick="select(this)">
+            <span>0</span>
+        </div>
+        <div class="number r2 c1" onclick="select(this)">
+            <span>1</span>
+        </div>
+        <div class="number r2 c2" onclick="select(this)">
+            <span>2</span>
+        </div>
+        <div class="number r2 c3" onclick="select(this)">
+            <span>3</span>
+        </div>
+        <div class="number r2 c4" onclick="select(this)">
+            <span>4</span>
+        </div>
+        <div class="number r3 c0" onclick="select(this)">
+            <span>5</span>
+        </div>
+        <div class="number r3 c1" onclick="select(this)">
+            <span>6</span>
+        </div>
+        <div class="number r3 c2" onclick="select(this)">
+            <span>7</span>
+        </div>
+        <div class="number r3 c3" onclick="select(this)">
+            <span>8</span>
+        </div>
+        <div class="number r3 c4" onclick="select(this)">
+            <span>9</span>
+        </div>
+        <div class="number r4 c0" onclick="select(this)">
+            <span>0</span>
+        </div>
+        <div class="number r4 c1" onclick="select(this)">
+            <span>1</span>
+        </div>
+        <div class="number r4 c2" onclick="select(this)">
+            <span>2</span>
+        </div>
+        <div class="number r4 c3" onclick="select(this)">
+            <span>3</span>
+        </div>
+        <div class="number r4 c4" onclick="select(this)">
+            <span>4</span>
+        </div>
+
+    </div>
+    <div id="message1div" style="display:none;">
+        <span id="message1"></span>マッチ&nbsp;<span id="message2"></span>セレクト<br />
+        
+    </div>
+    <div id="history">
+
+    </div>
+
+    <script type="text/javascript">
+        var run = true;
+        alert("ゲームを始めます。準備はOK？");
+
+        function restart() {
+            if (!run) {
+                if (confirm("再チャレンジしますか？")) {
+                    document.location = "index.html";
+                }
+                return;
+            }
+        }
+        function select(element) {
+            if (!run) {
+
+                return;
+            }
+            //element = document.getElementById("");
+            
+            if (element.getAttribute("selected") == "selected") return;
+            element.setAttribute("selected", "selected");
+            if (selectedNumber == null) {
+                
+            } else {
+                if (selectedNumber.innerHTML == element.innerHTML) {
+                    
+                    if (!matchFlag) {
+                        matchUp();
+                        matchFlag = true;
+                    }
+                    comboUp();
+                } else {
+                    
+                    if (matchFlag) {
+                        matchFlag = false;
+                        document.getElementById("history").innerHTML += document.getElementById("message1div").innerHTML;
+
+
+                    } else {
+                        miss(element);
+                        return;
+                    }
+                    comboCount = 1;
+                }
+
+            }
+            selectedNumber = element;
+        }
+
+        var matchFlag = false;
+        var matchCount = 0;
+        var comboCount = 1;
+        
+        var selectedNumber = null;
+
+        function random() {
+            return Math.random().toString().substring(2, 3);
+        }
+        function matchUp() {
+            matchCount++;
+            document.getElementById("message1").innerHTML = matchCount;
+            document.getElementById("message1div").style.display = "block";
+        }
+        function comboUp() {
+            comboCount++;
+            document.getElementById("message2").innerHTML = comboCount;
+            
+        }
+        function miss(element) {
+            matchCount = 0;
+            comboCount = 1;
+            var numbers = document.querySelectorAll(".number");
+            for (var i = 0; i < numbers.length; i++) {
+                numbers[i].firstElementChild.style.opacity = 1;
+            }
+
+            alert("Miss!");
+
+            element.removeAttribute("selected");
+            selectedNumber.removeAttribute("selected");
+
+            
+
+            var total=0;
+            for (var i = 0; i < numbers.length; i++) {
+                if (numbers[i].getAttribute("selected") == "selected") total++;
+            }
+            alert(total + "枚抜き!");
+
+            selectedNumber = null;
+
+            if (confirm("ゲームを始めます。準備はOK？")) {
+                setting();
+            } else {
+                clearInterval(teimer);
+                run = false;
+            }
+            
+        }
+
+        function setting() {
+            var numbers = document.querySelectorAll(".number");
+
+            for (var i = 0; i < numbers.length; i++) {
+
+                numbers[i].firstElementChild.innerHTML = random();
+                numbers[i].firstElementChild.style.opacity = 1;
+                numbers[i].removeAttribute("selected");
+            }
+
+            document.getElementById("message1div").style.display = "none";
+
+            document.getElementById("refresh").removeAttribute("disabled");
+            
+
+            document.getElementById("history").innerHTML +="<hr>";
+
+        }
+
+        function opacity() {
+            var numbers = document.querySelectorAll(".number");
+
+            for (var i = 0; i < numbers.length; i++) {
+                
+                numbers[i].firstElementChild.style.opacity = numbers[i].firstElementChild.style.opacity - 0.1;
+            }
+
+        }
+
+        function refresh(element){
+            element.setAttribute("disabled", "disabled");
+            var numbers = document.querySelectorAll(".number");
+
+            for (var i = 0; i < numbers.length; i++) {
+                numbers[i].firstElementChild.style.opacity = 1;
+
+            }
+        }
+
+        var teimer=setInterval(opacity, 500);
+
+        setting();
+    </script>
+
+</body>
+</html>

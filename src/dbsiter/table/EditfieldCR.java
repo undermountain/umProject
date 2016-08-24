@@ -103,7 +103,7 @@ public class EditfieldCR extends ControllerBase {
 	        return true;
 		}
 
-		Button btn=new Button("step2","追加","buttonvlaue");
+		Button btn=new Button("step2","変更","buttonvlaue");
 		model.addField(btn);
 
 		return true;
@@ -136,7 +136,7 @@ public class EditfieldCR extends ControllerBase {
 		String tbName=request.getParameter("tb");
 
         model.title=lib.UMConst.SITENAME_DBSITER;
-        model.heading="「"+tbName+"」テーブル 列追加";
+        model.heading="「"+tbName+"」テーブル 列編集";
 
         model.checkToken=true;
 
@@ -195,7 +195,7 @@ public class EditfieldCR extends ControllerBase {
         model.addFieldAll(tb,f,name,type);//,array);
 
         //Atag
-        ATag back=new ATag("editindex","「"+tbName+"」テーブル構成編集");
+        ATag back=new ATag("editindex","「"+tbName+"」テーブル編集");
         back.addUrlParameter(new KeyValue("tb",UrlEncode(tbName)));
         model.addElement("back", back);
 

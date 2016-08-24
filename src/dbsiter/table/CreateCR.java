@@ -23,7 +23,6 @@ public class CreateCR extends ControllerBase {
 
 	@Override
 	protected void doBefore() throws IOException {
-		if(!checkAuth())return;
 		setModel();
 	}
 
@@ -47,7 +46,7 @@ public class CreateCR extends ControllerBase {
 		ClassSerializer.serialize(dti, path+File.separator+ dti.name);
 
 		//todo 次のページへ
-		setMessage("データテーブル「"+dti.name+"」が作成されました。");
+		setMessage("データテーブル「"+dti.name+"」が作成されました。\n続いて列の追加を行ってください。");
 		response.sendRedirect("editindex?tb="+URLEncoder.encode(dti.name, "utf-8"));
 	}
 
@@ -72,7 +71,7 @@ public class CreateCR extends ControllerBase {
         name.addCssClass("form-control");
         model.addField(name);
 
-        ATag back=new ATag("../table/index","テーブル一覧");
+        ATag back=new ATag("index","テーブル一覧");
 
 
         model.addElement("back",back);
